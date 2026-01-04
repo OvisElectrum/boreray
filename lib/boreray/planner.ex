@@ -10,13 +10,22 @@ defmodule Boreray.Planner do
   @re ~w(like ilike not_like not_ilike)
   @set ~w(in not_in)
 
+  # ensure all our atoms exist
+  Enum.map(@eq ++ @cmp ++ @re ++ @set, &String.to_atom/1)
+
   def build_plan(params, schema) when is_list(params) do
     build_plan(%{"filter" => Map.new(params)}, schema)
   end
 
   def build_plan(params, schema) when is_map(params) do
     params
-    |> Stream.flat_map(fn {k, v} -> add_param(to_string(k), v, schema) end)
+    |> Stream.flat_map(fn
+      {k, v} ->
+        add_param(to_string(k), v, schema)
+
+      _ ->
+        []
+    end)
     |> Stream.reject(fn {_k, v, _e} -> is_nil(v) end)
     |> Enum.reduce(%Plan{}, fn {key, value, errors}, plan ->
       plan
@@ -116,7 +125,8 @@ defmodule Boreray.Planner do
   end
 
   defp new_operation(field, type, op, val) do
-    op = String.to_atom(op)
+    op = String.to_existing_atom(op)
+
     %Operation{
       field: field,
       type: type,
@@ -128,7 +138,7 @@ defmodule Boreray.Planner do
 
   defp normalize_op(:is), do: :eq
   defp normalize_op(:is_not), do: :not
-  defp normalize_op(op), do: String.to_atom(op)
+  defp normalize_op(op), do: op
 
   defp invalid_op_error(field, op, type) do
     "The operator `#{op}` for field `#{field}` of type `#{type}` is invalid."

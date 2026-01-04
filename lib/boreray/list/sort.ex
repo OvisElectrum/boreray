@@ -5,14 +5,15 @@ defmodule Boreray.List.Sort do
   def update(list, %{sort: nil}), do: Enum.into(list, [])
 
   def update(list, %{sort: field, sort_dir: dir, sort_type: type}) do
-    {sortable, other} = list
-    |> Stream.map(fn struct -> 
-      {get_sort_value(struct, field, type), struct}
-    end)
-    |> Enum.split_with(fn 
-      {%Undefined{}, _} -> false
-      _ -> true
-    end)
+    {sortable, other} =
+      list
+      |> Stream.map(fn struct ->
+        {get_sort_value(struct, field, type), struct}
+      end)
+      |> Enum.split_with(fn
+        {%Undefined{}, _} -> false
+        _ -> true
+      end)
 
     sortable
     |> sort(dir)

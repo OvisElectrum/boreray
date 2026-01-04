@@ -9,13 +9,16 @@ defmodule Boreray.List.Filter do
     |> Enum.into([])
   end
 
-  defp apply_operation(%{
-    regex: regex,
-    value: val,
-    op: op,
-    type: type,
-    field: field
-  }, stream) do
+  defp apply_operation(
+         %{
+           regex: regex,
+           value: val,
+           op: op,
+           type: type,
+           field: field
+         },
+         stream
+       ) do
     Stream.filter(stream, fn %{^field => field_value} ->
       evaluate(Coercion.cast(field_value, type), op, regex || val)
     end)

@@ -6,11 +6,11 @@ defmodule Boreray.List.Filter.SetValue do
   def evaluate(field_value, op, %MapSet{} = val) do
     do_evaluate(field_value, op, val)
   end
-  
+
   defp do_evaluate(field_value, :eq, val) do
     do_evaluate(field_value, :in, val)
   end
-  
+
   defp do_evaluate(field_value, :not_eq, val) do
     do_evaluate(field_value, :not_in, val)
   end

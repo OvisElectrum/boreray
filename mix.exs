@@ -21,10 +21,10 @@ defmodule Boreray.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ecto, "~> 3.12"},
+      {:ecto, "~> 3.13"},
       {:jason, "~> 1.4"},
-      {:timex, "~> 3.7"},
-      {:date_time_parser, "~> 1.2"}
+      {:date_time_parser, "~> 1.3"},
+      {:benchee, "~> 1.5", runtime: false}
     ]
   end
 end

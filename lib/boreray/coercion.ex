@@ -6,6 +6,8 @@ defmodule Boreray.Coercion do
   @is ~w(is is_not)a
   @re ~w(like not_like ilike not_ilike)a
 
+  def cast(nil, _type), do: nil
+
   def cast(list, type) when is_list(list) do
     Enum.map(list, &cast(&1, type))
   end
@@ -32,6 +34,7 @@ defmodule Boreray.Coercion do
 
   def cast(val, :regex, op) when op in @re do
     opt = if(op in ~w(ilike not_ilike)a, do: "i", else: "")
+
     val
     |> to_string()
     |> __MODULE__.ToRegex.cast(opt)

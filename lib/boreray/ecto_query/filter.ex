@@ -1,5 +1,6 @@
 defmodule Boreray.EctoQuery.Filter do
   @moduledoc false
+  alias Boreray.Coercion.Undefined
 
   def update(src_query, %{filter: operations}) do
     Enum.reduce(operations, src_query, fn %{
@@ -15,6 +16,10 @@ defmodule Boreray.EctoQuery.Filter do
 
   defp evaluate(query, field, _type, op, nil) do
     __MODULE__.NullValue.evaluate(query, field, op)
+  end
+
+  defp evaluate(query, field, _type, op, %Undefined{}) do
+    __MODULE__.UndefinedValue.evaluate(query, field, op)
   end
 
   defp evaluate(query, field, _type, op, val) when is_list(val) do

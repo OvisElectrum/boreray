@@ -4,16 +4,16 @@ defmodule Boreray.Coercion.ToDatetime do
 
   def cast(val) do
     case parse(val) do
-      {:error, _} -> %Undefined{type: :datetime, value: val}
+      {:error, _} ->
+        %Undefined{type: :datetime, value: val}
+
       {:ok, parsed} ->
-        parsed
-        |> DateTime.shift_zone!("Etc/UTC")
-        |> format()
+        format(parsed)
     end
   end
 
   defp parse(val) when is_binary(val) do
-    DateTimeParser.parse(val, assume_time: true)
+    DateTimeParser.parse(val, assume_time: true, assume_utc: true, to_utc: true)
   end
 
   defp parse(%DateTime{} = val), do: {:ok, val}
@@ -32,6 +32,7 @@ defmodule Boreray.Coercion.ToDatetime do
 
   defp format(t) do
     micro = format_microseconds(t.microsecond)
+
     "#{pad(t.year)}-#{pad(t.month)}-#{pad(t.day)} #{pad(t.hour)}:#{pad(t.minute)}:#{pad(t.second)}.#{micro}"
   end
 
@@ -42,6 +43,7 @@ defmodule Boreray.Coercion.ToDatetime do
   end
 
   defp format_microseconds({0, _}), do: "0"
+
   defp format_microseconds({int, pad}) do
     int
     |> to_string()

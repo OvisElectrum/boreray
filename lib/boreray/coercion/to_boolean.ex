@@ -2,6 +2,10 @@ defmodule Boreray.Coercion.ToBoolean do
   @moduledoc false
   alias Boreray.Coercion.Undefined
 
+  def cast(true), do: true
+  def cast(false), do: false
+  def cast(nil), do: nil
+
   def cast(val) do
     casted =
       val
